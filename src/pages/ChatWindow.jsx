@@ -2,14 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {FaTelegram} from "react-icons/fa"
 import { removeauth } from "../Utils/auth";
-import {io} from 'socket.io-client'
 import { useNavigate } from "react-router-dom";
-
-const socket = io(import.meta.env.VITE_BACKEND_BASEURL,{
-  transports: ["websocket"],
-})
-
-
 
 export default function ChatWindow({ activeChat, currentUser, token }) {
   const [messages, setMessages] = useState([]);
@@ -29,7 +22,6 @@ export default function ChatWindow({ activeChat, currentUser, token }) {
     navigate("/login")
   }
 
- 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -47,23 +39,7 @@ export default function ChatWindow({ activeChat, currentUser, token }) {
 
     if(conversation?._id){
       fetchMessages();
-      // join socket room
-      socket.emit("joinRoom", conversation._id)
-
-      // listen for new message
-      socket.on("receiveMessage", (msg)=>{
-        if(msg.roomId === conversation._id){
-          setMessages((prev)=> [...prev, msg])
-        }
-      })
-
     }
-
-    return ()=>{
-      socket.off("receiveMessage")
-    }
-
-    
   }, [conversation._id, token]);
 
   // Send message
@@ -118,8 +94,6 @@ export default function ChatWindow({ activeChat, currentUser, token }) {
                 <div className="w-8 h-8 bg-blue-200 flex text-white mr-2 justify-center items-center rounded-full">
                   {otherUser.username.charAt(0).toUpperCase()}
                 </div>
-                
-
               )}
 
               <div className={`p-3 rounded-xl max-w-xs break-words shadow-md ${

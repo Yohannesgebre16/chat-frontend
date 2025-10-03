@@ -26,7 +26,6 @@ function Register() {
                 saveauth(res.data)
                 navigate("/chats")
             }
-
         }catch(err){
             setMessage(err.response?.data?.msg || "Something went wrong")
 
